@@ -1,0 +1,12 @@
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: prisma_course
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: prisma_course
+    ports:
+      - 5432:5432
+    volumes:
+      - ./docker-data/db:/var/lib/postgresql/datacd
