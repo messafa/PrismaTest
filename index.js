@@ -5,25 +5,26 @@ const prisma = new PrismaClient();
 
 app.use(express.json());
 
-app.post("/", async (req, res) => {
-  const { firstName, lastName } = req.body;
+app.post("/user", async (req, res) => {
+  const { firstName, lastName, email } = req.body;
   //   console.log(firstName, lastName);
 
   const user = await prisma.user.create({
     data: {
       firstName,
       lastName,
+      email
     },
   });
   res.json(user);
 });
 
-app.get("/", async (req, res) => {
+app.get("/user", async (req, res) => {
   const users = await prisma.user.findMany();
   res.json(users);
 });
 
-app.get("/:id", async (req, res) => {
+app.get("/user/:id", async (req, res) => {
   const { id } = req.params;
   const user = await prisma.user.findUnique({
     where: {
@@ -33,7 +34,7 @@ app.get("/:id", async (req, res) => {
   res.json(user);
 });
 
-app.patch("/:id", async (req, res) => {
+app.patch("/user/:id", async (req, res) => {
   const { id } = req.params;
   const { firstName, lastName } = req.body;
   const user = await prisma.user.update({
@@ -48,7 +49,7 @@ app.patch("/:id", async (req, res) => {
   res.json(user);
 });
 
-app.delete("/:id", async (req, res) => {
+app.delete("/user/:id", async (req, res) => {
   const { id } = req.params;
   const user = await prisma.user.delete({
     where: {
@@ -57,6 +58,76 @@ app.delete("/:id", async (req, res) => {
   });
   res.json(user);
 });
+
+// post 
+app.post("/post", async (req, res) => {
+    const { title, data, authorId } = req.body;
+    const post = await prisma.post.create({
+        data: {
+        title,
+        data,
+        authorId: parseInt(authorId),
+        },
+    });
+    res.json(post);
+    });
+
+// get all post
+app.get("/post", async (req, res) => {
+    const posts = await prisma.post.findMany({
+        include: {
+            //use select to get only the required fields of author
+            author: {
+                select: {
+                    firstName: true,
+                    lastName: true,
+                },
+            },
+        },
+    });
+    res.json(posts);
+    });
+
+// get post by id
+app.get("/post/:id", async (req, res) => {
+    const { id } = req.params;
+    const post = await prisma.post.findUnique({
+        where: {
+        id,
+        },
+    });
+    res.json(post);
+    });
+
+// update post
+app.patch("/post/:id", async (req, res) => {
+    const { id } = req.params;
+    const { title, data } = req.body;
+    const post = await prisma.post.update({
+        where: {
+        id,
+        },
+        data: {
+        title,
+        data,
+        },
+    });
+    res.json(post);
+    });
+
+// delete post
+app.delete("/post/:id", async (req, res) => {
+    const { id } = req.params;
+    const post = await prisma.post.delete({
+        where: {
+        id,
+        },
+    });
+    res.json(post);
+    });
+
+
+
 
 app.listen(4000, () => {
   console.log("Server is running on port 4000");
