@@ -13,15 +13,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  USER
+  ADMIN
+  SUPERADMIN
+  SUPERVISOR
+}
+
 model User {
   id        Int   @id @default(autoincrement())
   firstName String
   lastName  String
+  email     String @unique
+  role      Role   @default(USER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   profileImage ProfileImage?
   writtenPosts Post[] @relation("UserPosts")
   favoritePosts Post[] @relation("UserFavorite")
+
+   
 }
 
 model ProfileImage {
