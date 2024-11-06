@@ -72,6 +72,14 @@ app.post("/post", async (req, res) => {
     res.json(post);
     });
 
+    //post many post (array of post)
+app.post("/post/many", async (req, res) => {
+    const createdPosts = await prisma.post.createMany({
+        data: req.body,
+    });
+    res.json(createdPosts);
+    });
+
 // get all post
 app.get("/post", async (req, res) => {
     const posts = await prisma.post.findMany({
