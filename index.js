@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const { PrismaClient } = require("@prisma/client");
+const { skip } = require("@prisma/client/runtime/library");
 const prisma = new PrismaClient();
 
 app.use(express.json());
@@ -83,6 +84,7 @@ app.post("/post/many", async (req, res) => {
 // get all post
 app.get("/post", async (req, res) => {
     const posts = await prisma.post.findMany({
+        
         include: {
             //use select to get only the required fields of author
             author: {
@@ -92,6 +94,11 @@ app.get("/post", async (req, res) => {
                 },
             },
         },
+        where: {
+            authorId: 2,
+        },
+        take: 3,
+        skip: 6,
     });
     res.json(posts);
     });
