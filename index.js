@@ -21,7 +21,23 @@ app.post("/user", async (req, res) => {
 });
 
 app.get("/user", async (req, res) => {
-  const users = await prisma.user.findMany();
+  const users = await prisma.user.findMany({
+    where: {
+        email: {
+            contains: "a@gmail.com", // CONTAINS
+            startsWith: "a", // STARTS WITH
+            endsWith: "a", // ENDS WITH
+            in: [" ", " ", " "], // IN
+            notIn: [" ", " ", " "], // NOT IN
+            lt: 10, // LESS THAN
+            lte: 10, // LESS THAN OR EQUAL
+            gt: 10, // GREATER THAN
+            gte: 10, // GREATER THAN OR EQUAL
+            not: " ", // NOT EQUAL
+            equals: " ", // EQUAL
+        },
+    }
+  });
   res.json(users);
 });
 
@@ -84,21 +100,30 @@ app.post("/post/many", async (req, res) => {
 // get all post
 app.get("/post", async (req, res) => {
     const posts = await prisma.post.findMany({
+
+        // the following code is for filtering, sorting, pagination, and including related data (basecally filtering)
         
-        include: {
-            //use select to get only the required fields of author
-            author: {
-                select: {
-                    firstName: true,
-                    lastName: true,
-                },
-            },
-        },
-        where: {
-            authorId: 2,
-        },
-        take: 3,
-        skip: 6,
+        // include: {
+        //     //use select to get only the required fields of author
+        //     author: {
+        //         select: {
+        //             firstName: true,
+        //             lastName: true,
+        //         },
+        //     },
+        // },
+        // where: {
+        //     authorId: 2,
+        // },
+        // take: 3,
+        // skip: 6,
+        // orderBy: {
+        //     createdAt: "desc",
+        // },
+
+        // now will go to advanced filtering in  the user
+
+        
     });
     res.json(posts);
     });
