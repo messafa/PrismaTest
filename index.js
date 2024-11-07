@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const { PrismaClient } = require("@prisma/client");
 const { skip } = require("@prisma/client/runtime/library");
+const e = require("express");
 const prisma = new PrismaClient();
 
 app.use(express.json());
@@ -14,7 +15,7 @@ app.post("/user", async (req, res) => {
     data: {
       firstName,
       lastName,
-      email
+      email,
     },
   });
   res.json(user);
@@ -23,20 +24,32 @@ app.post("/user", async (req, res) => {
 app.get("/user", async (req, res) => {
   const users = await prisma.user.findMany({
     where: {
-        email: {
-            contains: "a@gmail.com", // CONTAINS
-            startsWith: "a", // STARTS WITH
-            endsWith: "a", // ENDS WITH
-            in: [" ", " ", " "], // IN
-            notIn: [" ", " ", " "], // NOT IN
-            lt: 10, // LESS THAN
-            lte: 10, // LESS THAN OR EQUAL
-            gt: 10, // GREATER THAN
-            gte: 10, // GREATER THAN OR EQUAL
-            not: " ", // NOT EQUAL
-            equals: " ", // EQUAL
+      email: {
+        contains: "a@gmail.com", // CONTAINS
+        startsWith: "a", // STARTS WITH
+        endsWith: "a", // ENDS WITH
+        in: [" ", " ", " "], // IN
+        notIn: [" ", " ", " "], // NOT IN
+        lt: 10, // LESS THAN
+        lte: 10, // LESS THAN OR EQUAL
+        gt: 10, // GREATER THAN
+        gte: 10, // GREATER THAN OR EQUAL
+        not: " ", // NOT EQUAL
+        equals: " ", // EQUAL
+      },
+      AND: [
+        {
+          email: {
+            contains: "messafa", // CONTAINS
+          },
         },
-    }
+        {
+          email: {
+            endsWith: "com", // ENDS WITH
+          },
+        },
+      ],
+    },
   });
   res.json(users);
 });
@@ -59,8 +72,8 @@ app.patch("/user/:id", async (req, res) => {
       id: parseInt(id),
     },
     data: {
-     firstName,
-     lastName
+      firstName,
+      lastName,
     },
   });
   res.json(user);
@@ -76,98 +89,90 @@ app.delete("/user/:id", async (req, res) => {
   res.json(user);
 });
 
-// post 
+// post
 app.post("/post", async (req, res) => {
-    const { title, data, authorId } = req.body;
-    const post = await prisma.post.create({
-        data: {
-        title,
-        data,
-        authorId: parseInt(authorId),
-        },
-    });
-    res.json(post);
-    });
+  const { title, data, authorId } = req.body;
+  const post = await prisma.post.create({
+    data: {
+      title,
+      data,
+      authorId: parseInt(authorId),
+    },
+  });
+  res.json(post);
+});
 
-    //post many post (array of post)
+//post many post (array of post)
 app.post("/post/many", async (req, res) => {
-    const createdPosts = await prisma.post.createMany({
-        data: req.body,
-    });
-    res.json(createdPosts);
-    });
+  const createdPosts = await prisma.post.createMany({
+    data: req.body,
+  });
+  res.json(createdPosts);
+});
 
 // get all post
 app.get("/post", async (req, res) => {
-    const posts = await prisma.post.findMany({
-
-        // the following code is for filtering, sorting, pagination, and including related data (basecally filtering)
-        
-        // include: {
-        //     //use select to get only the required fields of author
-        //     author: {
-        //         select: {
-        //             firstName: true,
-        //             lastName: true,
-        //         },
-        //     },
-        // },
-        // where: {
-        //     authorId: 2,
-        // },
-        // take: 3,
-        // skip: 6,
-        // orderBy: {
-        //     createdAt: "desc",
-        // },
-
-        // now will go to advanced filtering in  the user
-
-        
-    });
-    res.json(posts);
-    });
+  const posts = await prisma.post.findMany({
+    // the following code is for filtering, sorting, pagination, and including related data (basecally filtering)
+    // include: {
+    //     //use select to get only the required fields of author
+    //     author: {
+    //         select: {
+    //             firstName: true,
+    //             lastName: true,
+    //         },
+    //     },
+    // },
+    // where: {
+    //     authorId: 2,
+    // },
+    // take: 3,
+    // skip: 6,
+    // orderBy: {
+    //     createdAt: "desc",
+    // },
+    // now will go to advanced filtering in  the user
+  });
+  res.json(posts);
+});
 
 // get post by id
 app.get("/post/:id", async (req, res) => {
-    const { id } = req.params;
-    const post = await prisma.post.findUnique({
-        where: {
-        id,
-        },
-    });
-    res.json(post);
-    });
+  const { id } = req.params;
+  const post = await prisma.post.findUnique({
+    where: {
+      id,
+    },
+  });
+  res.json(post);
+});
 
 // update post
 app.patch("/post/:id", async (req, res) => {
-    const { id } = req.params;
-    const { title, data } = req.body;
-    const post = await prisma.post.update({
-        where: {
-        id,
-        },
-        data: {
-        title,
-        data,
-        },
-    });
-    res.json(post);
-    });
+  const { id } = req.params;
+  const { title, data } = req.body;
+  const post = await prisma.post.update({
+    where: {
+      id,
+    },
+    data: {
+      title,
+      data,
+    },
+  });
+  res.json(post);
+});
 
 // delete post
 app.delete("/post/:id", async (req, res) => {
-    const { id } = req.params;
-    const post = await prisma.post.delete({
-        where: {
-        id,
-        },
-    });
-    res.json(post);
-    });
-
-
-
+  const { id } = req.params;
+  const post = await prisma.post.delete({
+    where: {
+      id,
+    },
+  });
+  res.json(post);
+});
 
 app.listen(4000, () => {
   console.log("Server is running on port 4000");
