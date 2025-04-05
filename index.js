@@ -9,7 +9,7 @@ app.use(express.json());
 
 app.post("/user", async (req, res) => {
   const { firstName, lastName, email } = req.body;
-  //   console.log(firstName, lastName);
+    console.log(firstName, lastName);
 
   const user = await prisma.user.create({
     data: {
@@ -89,7 +89,7 @@ app.delete("/user/:id", async (req, res) => {
   res.json(user);
 });
 
-// post
+
 app.post("/post", async (req, res) => {
   const { title, data, authorId } = req.body;
   const post = await prisma.post.create({
@@ -110,10 +110,10 @@ app.post("/post/many", async (req, res) => {
   res.json(createdPosts);
 });
 
-// get all post
+
 app.get("/post", async (req, res) => {
   const posts = await prisma.post.findMany({
-    // the following code is for filtering, sorting, pagination, and including related data (basecally filtering)
+    filtering, sorting, pagination, and including related data (basecally filtering)
     // include: {
     //     //use select to get only the required fields of author
     //     author: {
